@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exceptions.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chains</a> &gt; <a href="index.source.html" class="el_package">org.ethereum.lists.chains.model</a> &gt; <span class="el_source">Exceptions.kt</span></div><h1>Exceptions.kt</h1><pre class="source lang-java linenums">package org.ethereum.lists.chains.model
+
+<span class="fc" id="L3">class FileNameMustMatchChainId : Exception(&quot;chainId must match the filename&quot;)</span>
+<span class="fc" id="L4">class ExtensionMustBeJSON : Exception(&quot;filename extension must be json&quot;)</span>
+<span class="fc" id="L5">class ShouldHaveNoExtraFields(fields: Set&lt;String&gt;) : Exception(&quot;should have no extra field $fields&quot;)</span>
+<span class="fc" id="L6">class ShouldHaveNoMissingFields(fields: Set&lt;String&gt;) : Exception(&quot;missing field(s) $fields&quot;)</span>
+<span class="nc" id="L7">class RPCMustBeList : Exception(&quot;rpc must be a list&quot;)</span>
+<span class="nc" id="L8">class RPCMustBeListOfStrings : Exception(&quot;rpc must be a list of strings&quot;)</span>
+<span class="fc" id="L9">class ENSMustBeObject: Exception(&quot;ens must be an object&quot;)</span>
+<span class="fc" id="L10">class ENSMustHaveOnlyRegistry: Exception(&quot;ens can only have a registry currently&quot;)</span>
+<span class="fc" id="L11">class ENSRegistryAddressMustBeValid: Exception(&quot;ens registry must have valid address&quot;)</span>
+<span class="fc" id="L12">class NameMustBeUnique(dup: String): Exception(&quot; name must be unique - but found `$dup` more than once&quot;)</span>
+<span class="fc" id="L13">class ShortNameMustBeUnique(dup: String): Exception(&quot;short name must be unique - but found `$dup` more than once&quot;)</span>
+<span class="nc" id="L14">class UnsupportedNamespace(): Exception(&quot;So far only the EIP155 namespace is supported&quot;)</span>
+<span class="fc" id="L15">class ExplorersMustBeArray: Exception(&quot;explorers must be an array&quot;)</span>
+<span class="fc" id="L16">class ExplorerMustHaveName: Exception(&quot;Explorer must have name&quot;)</span>
+<span class="fc" id="L17">class ExplorerInvalidUrl: Exception(&quot;Explorer have url starting with https://&quot;)</span>
+<span class="fc" id="L18">class ExplorerStandardMustBeEIP3091: Exception(&quot;explorer standard must be EIP3091 - currently the only one supported&quot;)</span>
+<span class="fc" id="L19">class ParentHasInvalidType(type: String?): Exception(&quot;Parent has invalid type $type - only L2 or shard allowed&quot;)</span>
+<span class="fc" id="L20">class ParentMustBeObject: Exception(&quot;parent must be an object&quot;)</span>
+<span class="nc" id="L21">class ParentMustHaveChainAndType: Exception(&quot;parent must have fields 'chain' and 'type'&quot;)</span>
+<span class="fc" id="L22">class ParentHasExtraFields(fields: Set&lt;String&gt;): Exception(&quot;parent has extra field: $fields&quot;)</span>
+<span class="fc" id="L23">class ParentBridgeNoArray: Exception(&quot;parent bridge must be array&quot;)</span>
+<span class="fc" id="L24">class BridgeNoObject: Exception(&quot;parent bridges must be array consisting of json objects&quot;)</span>
+<span class="fc" id="L25">class BridgeOnlyURL: Exception(&quot;parent bridge only contain an URL&quot;)</span>
+<span class="fc" id="L26">class ParentChainDoesNotExist(chain: String): Exception(&quot;Referenced parent chain ($chain) does not exist&quot;)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

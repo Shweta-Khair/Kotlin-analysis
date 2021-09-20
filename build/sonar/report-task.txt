@@ -1,0 +1,6 @@
+projectKey=chains
+serverUrl=http://localhost:9000
+serverVersion=7.9.6.41879
+dashboardUrl=http://localhost:9000/dashboard?id=chains
+ceTaskId=AXwB-2sXV4JW51DQ3EbL
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AXwB-2sXV4JW51DQ3EbL

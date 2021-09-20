@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.ethereum.lists.chains.TheChainChecker" tests="30" skipped="0" failures="0" errors="0" timestamp="2021-09-17T06:27:20" hostname="SHWETAKHAI-W10" time="2.262">
+  <properties/>
+  <testcase name="shouldFailOnNonUniqueName" classname="org.ethereum.lists.chains.TheChainChecker" time="2.081"/>
+  <testcase name="shouldFailOnWrongExplorerStandard" classname="org.ethereum.lists.chains.TheChainChecker" time="0.015"/>
+  <testcase name="shouldFailForParentNoObject" classname="org.ethereum.lists.chains.TheChainChecker" time="0.005"/>
+  <testcase name="shouldFailForENSISNotObject" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="shouldFailForMissingField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="shouldPassForValidChain" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailForParentWithExtraBridgesField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="shouldPassForValidChainWithParent" classname="org.ethereum.lists.chains.TheChainChecker" time="0.016"/>
+  <testcase name="shouldFailForInvalidFilename" classname="org.ethereum.lists.chains.TheChainChecker" time="0.006"/>
+  <testcase name="shouldFailOnInvalidUrl" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailOnNonUniqueShortName" classname="org.ethereum.lists.chains.TheChainChecker" time="0.009"/>
+  <testcase name="shouldFailForParentWithInvalidType" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailForExtraComma" classname="org.ethereum.lists.chains.TheChainChecker" time="0.002"/>
+  <testcase name="shouldFailForExtraField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="canParse2chains" classname="org.ethereum.lists.chains.TheChainChecker" time="0.017"/>
+  <testcase name="shouldFailForChainNotMatchingFilename" classname="org.ethereum.lists.chains.TheChainChecker" time="0.005"/>
+  <testcase name="shouldPassForValidChainWithExplorers" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="shouldPassForValidChainWithParentBridge" classname="org.ethereum.lists.chains.TheChainChecker" time="0.005"/>
+  <testcase name="shouldFailWhenExplorerIsNotArray" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailOnMissingURL" classname="org.ethereum.lists.chains.TheChainChecker" time="0.007"/>
+  <testcase name="shouldFailForParentBridgeElementNoObject" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailForNonJSON" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailIfParentChainDoesNotExist" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailOnNoExplorerName" classname="org.ethereum.lists.chains.TheChainChecker" time="0.004"/>
+  <testcase name="shouldFailForInvalidENSAddress" classname="org.ethereum.lists.chains.TheChainChecker" time="0.018"/>
+  <testcase name="shouldFailForParentWithExtraField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailForNoRegistryField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.002"/>
+  <testcase name="shouldFailForParentWithExtraBridgeNoArray" classname="org.ethereum.lists.chains.TheChainChecker" time="0.002"/>
+  <testcase name="shouldFailForParentWithExtraParentField" classname="org.ethereum.lists.chains.TheChainChecker" time="0.003"/>
+  <testcase name="shouldFailForExtraENSFields" classname="org.ethereum.lists.chains.TheChainChecker" time="0.002"/>
+  <system-out><![CDATA[processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\wrongexplorerstandard\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentnobject\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-102.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-4.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentextrabridgesfield\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\withparent\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-invalid_filename.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\explorerinvalidurl\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\sameshortname\eip155-5.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\sameshortname\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentinvalidtype\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-extracomma.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\eip155-5.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-3.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\withexplorer\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\valid\withparentbridge\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\explorersnotarray\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\explorermissingurl\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentextrabridgeelementnoobject\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-1.nojson
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentchaindoesnotexist\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\explorernoname\eip155-1.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-99.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentextrafield\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-101.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentextrabridgesnoarray\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\withparentextrafield\eip155-2.json
+processing C:\Users\shwetakhai\Desktop\chains\build\resources\test\test_chains\invalid\eip155-100.json
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

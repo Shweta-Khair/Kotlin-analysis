@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chains</a> &gt; <a href="index.source.html" class="el_package">org.ethereum.lists.chains</a> &gt; <span class="el_source">Main.kt</span></div><h1>Main.kt</h1><pre class="source lang-java linenums">package org.ethereum.lists.chains
+
+import com.beust.klaxon.JsonArray
+import java.io.File
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
+import org.ethereum.lists.chains.model.*
+import org.kethereum.erc55.isValid
+import org.kethereum.model.Address
+import org.kethereum.rpc.HttpEthereumRPC
+
+<span class="fc" id="L12">val parsedShortNames = mutableSetOf&lt;String&gt;()</span>
+<span class="fc" id="L13">val parsedNames = mutableSetOf&lt;String&gt;()</span>
+
+<span class="pc" id="L15">val iconsPath = File(&quot;_data/icons&quot;)</span>
+
+<span class="pc" id="L17">val chainsPath = File(&quot;_data/chains&quot;)</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">private val allFiles = chainsPath.listFiles() ?: error(&quot;$chainsPath must contain the chain json files - but it does not&quot;)</span>
+<span class="fc bfc" id="L19" title="All 4 branches covered.">private val allChainFiles = allFiles.filter { !it.isDirectory }</span>
+
+fun main(args: Array&lt;String&gt;) {
+
+<span class="nc" id="L23">    doChecks(doRPCConnect = args.contains(&quot;rpcConnect&quot;))</span>
+
+<span class="nc" id="L25">    createOutputFiles()</span>
+<span class="nc" id="L26">}</span>
+
+private fun createOutputFiles() {
+<span class="nc" id="L29">    val buildPath = File(&quot;output&quot;).apply { mkdir() }</span>
+
+<span class="nc" id="L31">    val chainJSONArray = JsonArray&lt;JsonObject&gt;()</span>
+<span class="nc" id="L32">    val miniChainJSONArray = JsonArray&lt;JsonObject&gt;()</span>
+<span class="nc" id="L33">    val shortNameMapping = JsonObject()</span>
+
+<span class="nc" id="L35">    allChainFiles</span>
+<span class="nc" id="L36">        .map { Klaxon().parseJsonObject(it.reader()) }</span>
+<span class="nc" id="L37">        .sortedBy { (it[&quot;chainId&quot;] as Number).toLong() }</span>
+<span class="nc" id="L38">        .forEach { jsonObject -&gt;</span>
+<span class="nc" id="L39">            chainJSONArray.add(jsonObject)</span>
+
+
+<span class="nc" id="L42">            val miniJSON = JsonObject()</span>
+<span class="nc" id="L43">            listOf(&quot;name&quot;, &quot;chainId&quot;, &quot;shortName&quot;, &quot;networkId&quot;, &quot;nativeCurrency&quot;, &quot;rpc&quot;, &quot;faucets&quot;, &quot;infoURL&quot;).forEach { field -&gt;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                jsonObject[field]?.let { content -&gt;</span>
+<span class="nc" id="L45">                    miniJSON[field] = content</span>
+<span class="nc" id="L46">                }</span>
+<span class="nc" id="L47">            }</span>
+<span class="nc" id="L48">            miniChainJSONArray.add(miniJSON)</span>
+
+<span class="nc" id="L50">            shortNameMapping[jsonObject[&quot;shortName&quot;] as String] = &quot;eip155:&quot; + jsonObject[&quot;chainId&quot;]</span>
+
+<span class="nc" id="L52">        }</span>
+
+<span class="nc" id="L54">    File(buildPath, &quot;chains.json&quot;).writeText(chainJSONArray.toJsonString())</span>
+<span class="nc" id="L55">    File(buildPath, &quot;chains_pretty.json&quot;).writeText(chainJSONArray.toJsonString(prettyPrint = true))</span>
+
+<span class="nc" id="L57">    File(buildPath, &quot;chains_mini.json&quot;).writeText(miniChainJSONArray.toJsonString())</span>
+<span class="nc" id="L58">    File(buildPath, &quot;chains_mini_pretty.json&quot;).writeText(miniChainJSONArray.toJsonString(prettyPrint = true))</span>
+
+<span class="nc" id="L60">    File(buildPath, &quot;shortNameMapping.json&quot;).writeText(shortNameMapping.toJsonString(prettyPrint = true))</span>
+<span class="nc" id="L61">    File(buildPath, &quot;index.html&quot;).writeText(</span>
+        &quot;&quot;&quot;
+            &lt;!DOCTYPE HTML&gt;
+            &lt;html lang=&quot;en-US&quot;&gt;
+                &lt;head&gt;
+                    &lt;meta charset=&quot;UTF-8&quot;&gt;
+                    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url=https://chainlist.org&quot;&gt;
+                    &lt;script type=&quot;text/javascript&quot;&gt;
+                        window.location.href = &quot;https://chainlist.org&quot;
+                    &lt;/script&gt;
+                    &lt;title&gt;Page Redirection&lt;/title&gt;
+                &lt;/head&gt;
+                &lt;body&gt;
+                    If you are not redirected automatically, follow this &lt;a href='https://chainlist.org'&gt;link to chainlist.org&lt;/a&gt;.
+                &lt;/body&gt;
+            &lt;/html&gt;
+<span class="nc" id="L77">    &quot;&quot;&quot;.trimIndent()</span>
+    )
+
+<span class="nc" id="L80">    File(buildPath, &quot;CNAME&quot;).writeText(&quot;chainid.network&quot;)</span>
+<span class="nc" id="L81">}</span>
+
+private fun doChecks(doRPCConnect: Boolean) {
+<span class="nc" id="L84">    allChainFiles.forEach {</span>
+<span class="nc" id="L85">        checkChain(it, doRPCConnect)</span>
+<span class="nc" id="L86">    }</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">    val allIcons = iconsPath.listFiles() ?: return</span>
+<span class="nc" id="L89">    allIcons.forEach {</span>
+<span class="nc" id="L90">        checkIcon(it)</span>
+<span class="nc" id="L91">    }</span>
+
+<span class="nc bnc" id="L93" title="All 2 branches missed.">    allFiles.filter { it.isDirectory }.forEach {</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (it.name != &quot;deprecated&quot;) {</span>
+<span class="nc" id="L95">            error(&quot;the only directory allowed is 'deprecated'&quot;)</span>
+        }
+<span class="nc" id="L97">    }</span>
+<span class="nc" id="L98">}</span>
+
+fun checkIcon(icon: File) {
+<span class="nc" id="L101">    println(&quot;checking Icon &quot; + icon.name)</span>
+<span class="nc" id="L102">    val obj: JsonArray&lt;*&gt; = Klaxon().parseJsonArray(icon.reader())</span>
+<span class="nc" id="L103">    println(&quot;found variants &quot; + obj.size)</span>
+<span class="nc" id="L104">    obj.forEach { it -&gt;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (it !is JsonObject) {</span>
+<span class="nc" id="L106">            error(&quot;Icon variant must be an object&quot;)</span>
+        }
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        val url = it[&quot;url&quot;] ?: error(&quot;Icon must have a URL&quot;)</span>
+
+<span class="nc bnc" id="L111" title="All 4 branches missed.">        if (url !is String || !url.startsWith(&quot;ipfs://&quot;)) {</span>
+<span class="nc" id="L112">            error(&quot;url must start with ipfs://&quot;)</span>
+        }
+
+<span class="nc" id="L115">        val width = it[&quot;width&quot;]</span>
+<span class="nc" id="L116">        val height = it[&quot;height&quot;]</span>
+<span class="nc bnc" id="L117" title="All 4 branches missed.">        if (width != null || height != null) {</span>
+<span class="nc bnc" id="L118" title="All 4 branches missed.">            if (height == null || width == null) {</span>
+<span class="nc" id="L119">                error(&quot;If icon has width or height it needs to have both&quot;)</span>
+            }
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (width !is Int) {</span>
+<span class="nc" id="L123">                error(&quot;Icon width must be Int&quot;)</span>
+            }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (height !is Int) {</span>
+<span class="nc" id="L126">                error(&quot;Icon height must be Int&quot;)</span>
+            }
+        }
+
+<span class="nc" id="L130">        val format = it[&quot;format&quot;]</span>
+<span class="nc bnc" id="L131" title="All 6 branches missed.">        if (format !is String || (format != &quot;png&quot; &amp;&amp; format != &quot;svg&quot;)) {</span>
+<span class="nc" id="L132">            error(&quot;Icon format must be a png or svg but was $format&quot;)</span>
+        }
+<span class="nc" id="L134">    }</span>
+<span class="nc" id="L135">}</span>
+
+fun checkChain(chainFile: File, connectRPC: Boolean) {
+<span class="fc" id="L138">    println(&quot;processing $chainFile&quot;)</span>
+
+<span class="fc" id="L140">    parseWithMoshi(chainFile)</span>
+
+<span class="fc" id="L142">    val jsonObject = Klaxon().parseJsonObject(chainFile.reader())</span>
+<span class="fc" id="L143">    val chainAsLong = getNumber(jsonObject, &quot;chainId&quot;)</span>
+
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">    if (chainFile.nameWithoutExtension.startsWith(&quot;eip155-&quot;)) {</span>
+<span class="fc bfc" id="L146" title="All 4 branches covered.">        if (chainAsLong != chainFile.nameWithoutExtension.replace(&quot;eip155-&quot;, &quot;&quot;).toLongOrNull()) {</span>
+<span class="fc" id="L147">            throw(FileNameMustMatchChainId())</span>
+        }
+    } else {
+<span class="nc" id="L150">        throw(UnsupportedNamespace())</span>
+    }
+
+<span class="fc bfc" id="L153" title="All 2 branches covered.">    if (chainFile.extension != &quot;json&quot;) {</span>
+<span class="fc" id="L154">        throw(ExtensionMustBeJSON())</span>
+    }
+
+<span class="fc" id="L157">    getNumber(jsonObject, &quot;networkId&quot;)</span>
+
+<span class="fc" id="L159">    val extraFields = jsonObject.map.keys.subtract(mandatory_fields).subtract(optionalFields)</span>
+<span class="fc bfc" id="L160" title="All 4 branches covered.">    if (extraFields.isNotEmpty()) {</span>
+<span class="fc" id="L161">        throw ShouldHaveNoExtraFields(extraFields)</span>
+    }
+
+<span class="fc" id="L164">    val missingFields = mandatory_fields.subtract(jsonObject.map.keys)</span>
+<span class="fc bfc" id="L165" title="All 4 branches covered.">    if (missingFields.isNotEmpty()) {</span>
+<span class="fc" id="L166">        throw ShouldHaveNoMissingFields(missingFields)</span>
+    }
+
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">    jsonObject[&quot;icon&quot;]?.let {</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (!File(iconsPath, &quot;$it.json&quot;).exists()) {</span>
+<span class="nc" id="L171">            error(&quot;The Icon $it does not exist - was used in ${chainFile.name}&quot;)</span>
+        }
+<span class="nc" id="L173">    }</span>
+
+<span class="fc bfc" id="L175" title="All 2 branches covered.">    jsonObject[&quot;explorers&quot;]?.let {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        if (it !is JsonArray&lt;*&gt;) {</span>
+<span class="fc" id="L177">            throw (ExplorersMustBeArray())</span>
+        }
+
+<span class="fc" id="L180">        it.forEach { explorer -&gt;</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            if (explorer !is JsonObject) {</span>
+<span class="nc" id="L182">                error(&quot;explorer must be object&quot;)</span>
+            }
+
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (explorer[&quot;name&quot;] == null) {</span>
+<span class="fc" id="L186">                throw(ExplorerMustHaveName())</span>
+            }
+
+<span class="fc" id="L189">            val url = explorer[&quot;url&quot;]</span>
+<span class="pc bpc" id="L190" title="1 of 6 branches missed.">            if (url == null || url !is String || !url.startsWith(&quot;https://&quot;)) {</span>
+<span class="fc" id="L191">                throw(ExplorerInvalidUrl())</span>
+            }
+
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if (explorer[&quot;standard&quot;] != &quot;EIP3091&quot;) {</span>
+<span class="fc" id="L195">                throw(ExplorerStandardMustBeEIP3091())</span>
+            }
+<span class="fc" id="L197">        }</span>
+<span class="fc" id="L198">    }</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    jsonObject[&quot;ens&quot;]?.let {</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (it !is JsonObject) {</span>
+<span class="fc" id="L201">            throw ENSMustBeObject()</span>
+        }
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (it.keys != mutableSetOf(&quot;registry&quot;)) {</span>
+<span class="fc" id="L204">            throw ENSMustHaveOnlyRegistry()</span>
+        }
+
+<span class="fc" id="L207">        val address = Address(it[&quot;registry&quot;] as String)</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (!address.isValid()) {</span>
+<span class="fc" id="L209">            throw ENSRegistryAddressMustBeValid()</span>
+        }
+<span class="fc" id="L211">    }</span>
+
+<span class="fc bfc" id="L213" title="All 2 branches covered.">    jsonObject[&quot;parent&quot;]?.let {</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        if (it !is JsonObject) {</span>
+<span class="fc" id="L215">            throw ParentMustBeObject()</span>
+        }
+
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (!it.keys.containsAll(setOf(&quot;chain&quot;, &quot;type&quot;))) {</span>
+<span class="nc" id="L219">            throw ParentMustHaveChainAndType()</span>
+        }
+
+<span class="fc" id="L222">        val extraFields = it.keys - setOf(&quot;chain&quot;, &quot;type&quot;, &quot;bridges&quot;)</span>
+<span class="fc bfc" id="L223" title="All 4 branches covered.">        if (extraFields.isNotEmpty()) {</span>
+<span class="fc" id="L224">            throw ParentHasExtraFields(extraFields)</span>
+        }
+
+<span class="fc" id="L227">        val bridges = it[&quot;bridges&quot;]</span>
+<span class="fc bfc" id="L228" title="All 4 branches covered.">        if (bridges != null &amp;&amp; bridges !is List&lt;*&gt;) {</span>
+<span class="fc" id="L229">            throw ParentBridgeNoArray()</span>
+        }
+<span class="fc bfc" id="L231" title="All 4 branches covered.">        (bridges as? JsonArray&lt;*&gt;)?.forEach { bridge -&gt;</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            if (bridge !is JsonObject) {</span>
+<span class="fc" id="L233">                throw BridgeNoObject()</span>
+            }
+<span class="pc bpc" id="L235" title="1 of 4 branches missed.">            if (bridge.keys.size != 1 || bridge.keys.first() != &quot;url&quot;) {</span>
+<span class="fc" id="L236">                throw BridgeOnlyURL()</span>
+            }
+<span class="fc" id="L238">        }</span>
+
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (!setOf(&quot;L2&quot;, &quot;shard&quot;).contains(it[&quot;type&quot;])) {</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            throw ParentHasInvalidType(it[&quot;type&quot;] as? String)</span>
+        }
+
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (!File(chainFile.parentFile, it[&quot;chain&quot;] as String + &quot;.json&quot;).exists()) {</span>
+<span class="fc" id="L245">            throw ParentChainDoesNotExist(it[&quot;chain&quot;] as String)</span>
+        }
+
+<span class="fc" id="L248">    }</span>
+
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">    if (connectRPC) {</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (jsonObject[&quot;rpc&quot;] is List&lt;*&gt;) {</span>
+<span class="nc" id="L252">            (jsonObject[&quot;rpc&quot;] as List&lt;*&gt;).forEach {</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                if (it !is String) {</span>
+<span class="nc" id="L254">                    throw(RPCMustBeListOfStrings())</span>
+                } else {
+<span class="nc" id="L256">                    println(&quot;connecting to $it&quot;)</span>
+<span class="nc" id="L257">                    val ethereumRPC = HttpEthereumRPC(it)</span>
+<span class="nc" id="L258">                    println(&quot;Client:&quot; + ethereumRPC.clientVersion())</span>
+<span class="nc" id="L259">                    println(&quot;BlockNumber:&quot; + ethereumRPC.blockNumber())</span>
+<span class="nc" id="L260">                    println(&quot;GasPrice:&quot; + ethereumRPC.gasPrice())</span>
+                }
+<span class="nc" id="L262">            }</span>
+<span class="nc" id="L263">            println()</span>
+        } else {
+<span class="nc" id="L265">            throw(RPCMustBeList())</span>
+        }
+    }
+<span class="fc" id="L268">}</span>
+
+/*
+moshi fails for extra commas
+https://github.com/ethereum-lists/chains/issues/126
+*/
+private fun parseWithMoshi(fileToParse: File) {
+<span class="fc" id="L275">    val parsedChain = chainAdapter.fromJson(fileToParse.readText())</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">    if (parsedNames.contains(parsedChain!!.name)) {</span>
+<span class="fc" id="L277">        throw NameMustBeUnique(parsedChain.name)</span>
+    }
+<span class="fc" id="L279">    parsedNames.add(parsedChain.name)</span>
+
+<span class="fc bfc" id="L281" title="All 2 branches covered.">    if (parsedShortNames.contains(parsedChain.shortName)) {</span>
+<span class="fc" id="L282">        throw ShortNameMustBeUnique(parsedChain.shortName)</span>
+    }
+<span class="fc" id="L284">    parsedShortNames.add(parsedChain.shortName)</span>
+<span class="fc" id="L285">}</span>
+
+private fun getNumber(jsonObject: JsonObject, field: String): Long {
+<span class="fc" id="L288">    return when (val chainId = jsonObject[field]) {</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">        is Int -&gt; chainId.toLong()</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        is Long -&gt; chainId</span>
+<span class="nc" id="L291">        else -&gt; throw(Exception(&quot;chain_id must be a number&quot;))</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
