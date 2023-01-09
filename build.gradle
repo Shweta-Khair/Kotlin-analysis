@@ -28,9 +28,10 @@ apply plugin: "com.github.ben-manes.versions"
 
 sonarqube {
     properties {
-
         property "sonar.host.url", "http://localhost:9000"
-      
+        property "sonar.projectName", "Kotlin-project"
+        property "sonar.projectKey", "Kotlin-project"   
+        property "sonar.login", "15a5b0217653a28a82a1a45b463812fc4dd685cf"
     }
 }
 
